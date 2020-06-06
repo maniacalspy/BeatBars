@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using static BeatBarsGame.BarGlobals;
 
 namespace BeatBarsGame
 {
@@ -26,25 +27,12 @@ namespace BeatBarsGame
                     switch (value)
                     {
                         case BarSideState.Green:
-                            if (this.barState == BarSideState.Blue)
-                            {
                                 this.DrawColor = Color.Green;
                                 this.barState = this.bar.State = value;
-                            }
                             break;
                         case BarSideState.Red:
-                            if (this.barState == BarSideState.Green)
-                            {
-                                this.DrawColor = Color.Blue;
-                                this.barState = this.bar.State = value;
-                            }
-                            break;
-                        case BarSideState.Blue:
-                            if (this.barState == BarSideState.Red)
-                            {
-                                this.DrawColor = Color.Blue;
-                                this.barState = this.bar.State = value;
-                            }
+                            this.DrawColor = Color.Red;
+                            this.barState = this.bar.State = value;
                             break;
                     }
 

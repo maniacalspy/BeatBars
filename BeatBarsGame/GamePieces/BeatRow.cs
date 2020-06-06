@@ -85,10 +85,10 @@ namespace BeatBarsGame
             }
             basis = basisVectors;
             beatM = new BeatManager();
-            barM = new BarManager(game, basis);
+            barM = new BarManager(game, basis, 3);
             compassLocation = location;
             BarsNeedFlipped = false;
-            //RowLocation = new Vector2(100, 100);
+
             rowRectangle = new Rectangle();
         }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BeatBarsGame.BarGlobals;
 
 namespace BeatBarsGame
 {
@@ -46,14 +47,19 @@ namespace BeatBarsGame
         public BarManager(Game game, Vector2[] basisVectors, int numBars) : base(game)
         {
 
-            for (int i = 1; i <= numBars; i++) {
+            for (int i = 0; i < numBars; i++) {
+                Vector2 LeftPos = basisVectors[0] + (
+                    -basisVectors[1] + i * ((2 * basisVectors[1])/numBars)
+                    );
                 Vector2[] positions = new Vector2[3] {
                 new Vector2(0,0),
-                basisVectors[0] - basisVectors[1],
-                basisVectors[0] + basisVectors[1]
+                LeftPos,
+                LeftPos + ((2 * basisVectors[1])/numBars)
                 };
 
                 TriangleBar temp = new TriangleBar(this.Game, positions);
+                temp.BarState = GetStateFromInt(i % BarSideCount);
+
                 bars.Add(temp);
             }
         }
@@ -61,18 +67,7 @@ namespace BeatBarsGame
         {
             foreach(var b in bars)
             {
-                switch (b.BarState)
-                {
-                    case BarSideState.Green:
-                        b.BarState = BarSideState.Red;
-                        break;
-                    case BarSideState.Red:
-                        b.BarState = BarSideState.Blue;
-                        break;
-                    case BarSideState.Blue:
-                        b.BarState = BarSideState.Green;
-                        break;
-                }
+                b.BarState = GetNextBarState(b.BarState);
             }
         }
 

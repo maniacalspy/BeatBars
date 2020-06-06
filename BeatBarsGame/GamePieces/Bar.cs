@@ -1,16 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using static BeatBarsGame.BarGlobals;
 
 namespace BeatBarsGame
 {
-    public enum BarSideState { Green, Red, Blue};
+    public static class BarGlobals
+    {
+        public enum BarSideState { Green, Red};
+        public const int BarSideCount = 2;
 
+        public static BarSideState GetNextBarState(BarSideState curstate)
+        {
+            switch (curstate)
+            {
+                case BarSideState.Green:
+                   return BarSideState.Red;
+                case BarSideState.Red:
+                   return BarSideState.Green;
+                
+                default:
+                    return BarSideState.Green;
+            }
+        }
+
+        public static BarSideState GetStateFromInt(int state)
+        {
+            switch (state)
+            {
+                case 0:
+                    return BarSideState.Green;
+                case 1:
+                    return BarSideState.Red;
+                default:
+                    return BarSideState.Green;
+            }
+        }
+    }
     class Bar
     {
-
+        
         protected BarSideState _state;
 
         public BarSideState State { 
