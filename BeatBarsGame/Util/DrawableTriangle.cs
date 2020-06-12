@@ -40,15 +40,44 @@ namespace BeatBarsGame
             }
         }
 
+        public DrawableTriangle(Game game, Vector2[] vertexPositionVectors) : base(game)
+        {
+            changeRate = .1f;
+
+            VertexPositionColor[] temp = new VertexPositionColor[3];
+            for (int i = 0; i < 3; i++)
+            {
+                temp[i].Position = new Vector3(vertexPositionVectors[i].X, -vertexPositionVectors[i].Y, 0);
+            }
+            _pcVerticies = temp;
+        }
+
         public override void Initialize()
         {
             world = Matrix.CreateTranslation(0, 0, 0);
-            view = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), this.Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
+            view = Matrix.CreateLookAt(new Vector3(0, 0, 1.5f), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), this.Game.GraphicsDevice.Viewport.AspectRatio, 0.01f, 100f);
 
             vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
             vertexBuffer.SetData<VertexPositionColor>(_pcVerticies);
+
+
+
+            CalcTriangle();
+
+
             base.Initialize();
+        }
+
+        void CalcTriangle()
+        {
+            Vector2[] convertedPositions = new Vector2[3];
+            for (int i = 0; i < 3; i++)
+            {
+                convertedPositions[i] = new Vector2((_pcVerticies[i].Position.X + 1) * (Game.GraphicsDevice.Viewport.Width / 2),
+                    (_pcVerticies[i].Position.Y + 1) * (Game.GraphicsDevice.Viewport.Height / 2));
+            }
+            triangle = new Triangle(convertedPositions);
         }
 
         protected override void LoadContent()
@@ -90,18 +119,6 @@ namespace BeatBarsGame
                 _pcVerticies[i].Color = Color.Lerp(_pcVerticies[i].Color, _pcVerticies[0].Color, (float)changeElapsedTime);
             }
             if (changeElapsedTime >= changeRate) _state = colorState.Finished;
-        }
-
-        public DrawableTriangle(Game game, Vector2[] basisVectors) : base(game)
-        {
-            changeRate = .1f;
-
-            VertexPositionColor[] temp = new VertexPositionColor[3];
-            for (int i = 0; i < 3; i++)
-            {
-                temp[i].Position = new Vector3(basisVectors[i].X, -basisVectors[i].Y, 0);
-            }
-            _pcVerticies = temp;
         }
 
         protected void GradualColorChange(Color newColor)

@@ -15,6 +15,8 @@ namespace BeatBarsGame
 
         public bool BarsNeedFlipped;
 
+        int laneCount;
+
         BeatManager beatM;
         BarManager barM;
 
@@ -64,8 +66,9 @@ namespace BeatBarsGame
             }
         }
 
-        public BeatRow(Game game, RowCompassLocation location) : base(game)
+        public BeatRow(Game game, RowCompassLocation location, int numLanes) : base(game)
         {
+            laneCount = numLanes;
             Vector2[] basisVectors = new Vector2[2] { new Vector2(0, -1f / 3), new Vector2(1f / 3, 0) };
 
             switch (location)
@@ -75,25 +78,26 @@ namespace BeatBarsGame
                     break;
 
                 case RowCompassLocation.East:
-                    basisVectors = new Vector2[2] { new Vector2(1f / 3, 0), new Vector2(0, 1f / 3) };
+                    basisVectors = new Vector2[2] { new Vector2(1f / 3, 0), new Vector2(0, 1f / 4) };
                     break;
 
                 case RowCompassLocation.West:
-                    basisVectors = new Vector2[2] { new Vector2(-1f / 3, 0), new Vector2(0, -1f / 3) };
+                    basisVectors = new Vector2[2] { new Vector2(-1f / 3, 0), new Vector2(0, -1f / 4) };
                     break;
 
             }
             basis = basisVectors;
-            beatM = new BeatManager();
-            barM = new BarManager(game, basis, 3);
+            barM = new BarManager(game, basis, laneCount);
             compassLocation = location;
             BarsNeedFlipped = false;
-
             rowRectangle = new Rectangle();
         }
 
         public override void Initialize()
         {
+            Vector2 temp = basis[0];
+            beatM = new BeatManager(Game, basis[0] / basis[0].Length(), rowRectangle, laneCount, compassLocation);
+            beatM.Initialize();
             barM.Initialize();
             base.Initialize();
         }
@@ -105,13 +109,14 @@ namespace BeatBarsGame
                 barM.FlipBars();
                 BarsNeedFlipped = false;
             }
-
+            beatM.Update(gameTime);
             barM.Update(gameTime);
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
+            beatM.Draw(gameTime);
             barM.Draw(gameTime);
             base.Draw(gameTime);
         }

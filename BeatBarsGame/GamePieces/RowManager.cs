@@ -17,10 +17,10 @@ namespace BeatBarsGame
         {
             this.controller = new BBPlayerController(game);
             Rows = new Dictionary<RowCompassLocation, BeatRow> {
-                { RowCompassLocation.North, new BeatRow(this.Game, RowCompassLocation.North)},
-                { RowCompassLocation.South, new BeatRow(this.Game, RowCompassLocation.South)},
-                { RowCompassLocation.East, new BeatRow(this.Game, RowCompassLocation.East)},
-                { RowCompassLocation.West, new BeatRow(this.Game, RowCompassLocation.West)}
+                { RowCompassLocation.North, new BeatRow(this.Game, RowCompassLocation.North, 3)},
+                { RowCompassLocation.South, new BeatRow(this.Game, RowCompassLocation.South, 3)},
+                { RowCompassLocation.East, new BeatRow(this.Game, RowCompassLocation.East, 3)},
+                { RowCompassLocation.West, new BeatRow(this.Game, RowCompassLocation.West, 3)}
             };
         }
 
@@ -56,6 +56,13 @@ namespace BeatBarsGame
 
         Rectangle CalculateRowRectangle(BeatRow row)
         {
+            int smallerdimension = GraphicsDevice.Viewport.Height;
+            int largerdimension = GraphicsDevice.Viewport.Width;
+            if (GraphicsDevice.Viewport.Width < GraphicsDevice.Viewport.Height) {
+                smallerdimension = GraphicsDevice.Viewport.Width;
+                largerdimension = GraphicsDevice.Viewport.Height;
+            }
+
             int X = 0, Y = 0, Width = this.GraphicsDevice.Viewport.Width / 3, Height = this.GraphicsDevice.Viewport.Height / 3;
             switch (row.compassLocation)
             {

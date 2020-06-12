@@ -13,7 +13,7 @@ namespace BeatBarsGame
     {
         internal GameConsoleBar bar;
 
-        public TriangleBar(Game game, Vector2[] basisVectors) : base(game, basisVectors)
+        public TriangleBar(Game game, Vector2[] vertexPositionVectors) : base(game, vertexPositionVectors)
         {
             this.bar = new GameConsoleBar((GameConsole)game.Services.GetService<IGameConsole>());
             this.BarState = BarSideState.Green;

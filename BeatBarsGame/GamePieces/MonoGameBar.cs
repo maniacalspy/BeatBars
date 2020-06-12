@@ -61,8 +61,8 @@ namespace BeatBarsGame
         //{
 
 
-        //    sb.Draw(spriteTexture,
-        //      Rectangle,
+        //sb.Draw(spriteTexture,
+        //  Rectangle,
         //      null,
         //      DrawColor,
         //      MathHelper.ToRadians(Rotation),
@@ -71,5 +71,5 @@ namespace BeatBarsGame
         //      0);
         //}
 
-    }
+}
 }

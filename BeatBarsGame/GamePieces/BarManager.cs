@@ -79,7 +79,7 @@ namespace BeatBarsGame
             {
                 b.Initialize();
             }
-        }
+        } 
 
         public override void Update(GameTime gameTime)
         {
