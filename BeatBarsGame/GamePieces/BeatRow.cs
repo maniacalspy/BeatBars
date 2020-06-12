@@ -59,9 +59,13 @@ namespace BeatBarsGame
                             break;
                     }
 
-                    barM.barRegion = new Rectangle(XPos, YPos, Width, Height);
+
                     RowLocation = new Vector2(XPos, YPos);
-                    barM.UpdateBarLocationAndRects();
+                    if (barM != null)
+                    {
+                        barM.barRegion = new Rectangle(XPos, YPos, Width, Height);
+                        barM.UpdateBarLocationAndRects();
+                    }
                 }
             }
         }
@@ -69,25 +73,6 @@ namespace BeatBarsGame
         public BeatRow(Game game, RowCompassLocation location, int numLanes) : base(game)
         {
             laneCount = numLanes;
-            Vector2[] basisVectors = new Vector2[2] { new Vector2(0, -1f / 3), new Vector2(1f / 3, 0) };
-
-            switch (location)
-            {
-                case RowCompassLocation.South:
-                    basisVectors[0] = new Vector2(0, 1f / 3);
-                    break;
-
-                case RowCompassLocation.East:
-                    basisVectors = new Vector2[2] { new Vector2(1f / 3, 0), new Vector2(0, 1f / 4) };
-                    break;
-
-                case RowCompassLocation.West:
-                    basisVectors = new Vector2[2] { new Vector2(-1f / 3, 0), new Vector2(0, -1f / 4) };
-                    break;
-
-            }
-            basis = basisVectors;
-            barM = new BarManager(game, basis, laneCount);
             compassLocation = location;
             BarsNeedFlipped = false;
             rowRectangle = new Rectangle();
@@ -95,15 +80,38 @@ namespace BeatBarsGame
 
         public override void Initialize()
         {
+            Vector2[] basisVectors = new Vector2[2] { new Vector2(0, Game.GraphicsDevice.Viewport.Height / 6), new Vector2(GraphicsDevice.Viewport.Width/6, 0) };
+            switch (compassLocation)
+            {
+                case RowCompassLocation.South:
+                    basisVectors[0] = new Vector2(0, -Game.GraphicsDevice.Viewport.Height / 6);
+                    break;
+
+                case RowCompassLocation.East:
+                    basisVectors = new Vector2[2] { new Vector2(GraphicsDevice.Viewport.Width / 6, 0), new Vector2(0, -Game.GraphicsDevice.Viewport.Height / 6) };
+                    break;
+
+                case RowCompassLocation.West:
+                    basisVectors = new Vector2[2] { new Vector2(-GraphicsDevice.Viewport.Width / 6, 0), new Vector2(0, -Game.GraphicsDevice.Viewport.Height / 6) };
+                    break;
+
+            }
+            basis = basisVectors;
+
             Vector2 temp = basis[0];
             beatM = new BeatManager(Game, basis[0] / basis[0].Length(), rowRectangle, laneCount, compassLocation);
             beatM.Initialize();
+
+
+            barM = new BarManager(Game, basis, laneCount);
+
             barM.Initialize();
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
+            List<Beat> beatsToRemove = new List<Beat>();
             if (BarsNeedFlipped)
             {
                 barM.FlipBars();
@@ -111,6 +119,11 @@ namespace BeatBarsGame
             }
             beatM.Update(gameTime);
             barM.Update(gameTime);
+            foreach(var b in beatM.Beats)
+            {
+                if (barM.CheckCollision(b)) beatsToRemove.Add(b);
+            }
+            beatM.RemoveBeats(beatsToRemove.ToArray());
             base.Update(gameTime);
         }
 

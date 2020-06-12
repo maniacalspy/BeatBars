@@ -8,7 +8,7 @@ namespace BeatBarsGame
     {
 
         BarSideState state;
-
+        public BarSideState State { get { return state; } }
         public Beat(Game game, Vector2 position): base(game)
         {
             state = BarSideState.Green;

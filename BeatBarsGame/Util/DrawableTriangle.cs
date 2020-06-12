@@ -56,10 +56,10 @@ namespace BeatBarsGame
         {
             world = Matrix.CreateTranslation(0, 0, 0);
             view = Matrix.CreateLookAt(new Vector3(0, 0, 1.5f), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), this.Game.GraphicsDevice.Viewport.AspectRatio, 0.01f, 100f);
+            projection = Matrix.CreateOrthographicOffCenter(GraphicsDevice.Viewport.Bounds, 0, 2);
 
             vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
-            vertexBuffer.SetData<VertexPositionColor>(_pcVerticies);
+            vertexBuffer.SetData(_pcVerticies);
 
 
 
@@ -74,8 +74,8 @@ namespace BeatBarsGame
             Vector2[] convertedPositions = new Vector2[3];
             for (int i = 0; i < 3; i++)
             {
-                convertedPositions[i] = new Vector2((_pcVerticies[i].Position.X + 1) * (Game.GraphicsDevice.Viewport.Width / 2),
-                    (_pcVerticies[i].Position.Y + 1) * (Game.GraphicsDevice.Viewport.Height / 2));
+                convertedPositions[i] = new Vector2((_pcVerticies[i].Position.X),
+                    (_pcVerticies[i].Position.Y));
             }
             triangle = new Triangle(convertedPositions);
         }
@@ -125,6 +125,21 @@ namespace BeatBarsGame
         {
             _state = colorState.Changing;
             _pcVerticies[0].Color = newColor;
+        }
+
+        public void SetVertexZeroToPosition(Vector3 newPosition)
+        {
+            Vector3 dist = newPosition - _pcVerticies[0].Position;
+
+            for (int i = 0; i < _pcVerticies.Length; i++)
+            {
+                _pcVerticies[i].Position += dist;
+            }
+        }
+
+        public bool Intersects(Rectangle otherRect)
+        {
+            return triangle.Intersects(otherRect);
         }
 
         public override void Draw(GameTime gameTime)

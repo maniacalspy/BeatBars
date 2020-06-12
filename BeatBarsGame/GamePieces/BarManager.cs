@@ -34,19 +34,18 @@ namespace BeatBarsGame
         public BarManager(Game game, Vector2[] basisVectors) : this(game, basisVectors, 1)
         {
 
-            Vector2[] positions = new Vector2[3] {
-                new Vector2(0,0),
-                basisVectors[0] - basisVectors[1],
-                basisVectors[0] + basisVectors[1]
-                };
+            //Vector2[] positions = new Vector2[3] {
+            //    new Vector2(0,0),
+            //    basisVectors[0] - basisVectors[1],
+            //    basisVectors[0] + basisVectors[1]
+            //    };
 
-            TriangleBar temp = new TriangleBar(this.Game, positions);
-            bars.Add(temp);
+            //TriangleBar temp = new TriangleBar(this.Game, positions);
+            //bars.Add(temp);
         }
 
         public BarManager(Game game, Vector2[] basisVectors, int numBars) : base(game)
         {
-
             for (int i = 0; i < numBars; i++) {
                 Vector2 LeftPos = basisVectors[0] + (
                     -basisVectors[1] + i * ((2 * basisVectors[1])/numBars)
@@ -77,6 +76,7 @@ namespace BeatBarsGame
 
             foreach(var b in bars)
             {
+                b.SetVertexZeroToPosition(new Vector3(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, 0));
                 b.Initialize();
             }
         } 
@@ -99,6 +99,17 @@ namespace BeatBarsGame
             }
         }
 
+        public bool CheckCollision(Beat beat)
+        {
+            foreach(var bar in bars)
+            {
+                if (bar.Intersects(beat.LocationRect))
+                {
+                    if (beat.State == bar.BarState) return true;
+                }
+            }
+            return false;
+        }
         public override void Draw(GameTime gameTime)
         {
             sb.Begin();

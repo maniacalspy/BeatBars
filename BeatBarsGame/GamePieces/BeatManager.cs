@@ -10,15 +10,19 @@ namespace BeatBarsGame
 {
     class BeatManager : DrawableGameComponent
     {
-        List<Beat> beats = new List<Beat>();
+        List<Beat> beats;
+        public List<Beat> Beats { get { return beats; } }
         List<Rectangle> Lanes;
+
+        List<IObserver<Beat>> _observers;
+
         Vector2 progressionDirection;
 
         float speed;
 
         public BeatManager(Game game, Vector2 direction, Rectangle region, int laneCount, RowCompassLocation compassLocation) : base(game)
         {
-
+            beats = new List<Beat>();
             Lanes = new List<Rectangle>();
             switch (compassLocation)
             {
@@ -40,7 +44,9 @@ namespace BeatBarsGame
                     break;
             }
 
-            progressionDirection = -direction;
+            progressionDirection = -direction; //negate the direction so the beats move the opposite direction as the vectors used to form the triangles
+            //IMPORTANT NOTE: the transformation matrix makes 0,0 the bottom left of the screen as opposed to XNA by default making 0,0 the top left, so the Y direction must be inverted to compensate
+            progressionDirection.Y *= -1;
             
         }
 
@@ -61,6 +67,7 @@ namespace BeatBarsGame
             {
                 b.Location += progressionDirection * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
                 b.Update(gameTime);
+
             }
             base.Update(gameTime);
         }
@@ -76,5 +83,16 @@ namespace BeatBarsGame
             sb.End();
             base.Draw(gameTime);
         }
+
+        public void RemoveBeats(Beat[] beatsToRemove)
+        {
+            foreach(var b in beatsToRemove)
+            if (beats.Contains(b))
+            {
+                b.Dispose();
+                beats.Remove(b);
+            }
+        }
+
     }
 }
