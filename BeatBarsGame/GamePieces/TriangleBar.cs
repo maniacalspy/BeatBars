@@ -13,6 +13,8 @@ namespace BeatBarsGame
     {
         internal GameConsoleBar bar;
 
+        Vector2 barMidPoint;
+        public Vector2 BarMidPoint { get { return barMidPoint; } }
         public TriangleBar(Game game, Vector2[] vertexPositionVectors) : base(game, vertexPositionVectors)
         {
             this.bar = new GameConsoleBar((GameConsole)game.Services.GetService<IGameConsole>());
@@ -38,6 +40,14 @@ namespace BeatBarsGame
                             break;
                     }
             }
+        }
+
+        public override void SetVertexZeroToPosition(Vector3 newPosition)
+        {
+            base.SetVertexZeroToPosition(newPosition);
+            Vector2 point1 = new Vector2(_pcVerticies[1].Position.X, _pcVerticies[1].Position.Y);
+            Vector2 point2 = new Vector2(_pcVerticies[2].Position.X, _pcVerticies[2].Position.Y);
+            barMidPoint = (point1 + point2) / 2;
         }
 
         public override void Initialize()

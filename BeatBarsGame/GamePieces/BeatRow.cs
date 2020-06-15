@@ -98,14 +98,11 @@ namespace BeatBarsGame
             }
             basis = basisVectors;
 
-            Vector2 temp = basis[0];
-            beatM = new BeatManager(Game, basis[0] / basis[0].Length(), rowRectangle, laneCount, compassLocation);
-            beatM.Initialize();
-
-
             barM = new BarManager(Game, basis, laneCount);
-
             barM.Initialize();
+
+            beatM = new BeatManager(Game, barM, rowRectangle, laneCount, compassLocation);
+            beatM.Initialize();
             base.Initialize();
         }
 

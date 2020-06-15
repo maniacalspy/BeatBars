@@ -110,6 +110,11 @@ namespace BeatBarsGame
             }
             return false;
         }
+
+        public Vector2 getBarMidPointByIndex(int index)
+        {
+            return bars[index].BarMidPoint;
+        }
         public override void Draw(GameTime gameTime)
         {
             sb.Begin();

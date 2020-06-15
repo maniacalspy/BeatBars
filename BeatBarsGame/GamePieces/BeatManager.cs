@@ -14,9 +14,10 @@ namespace BeatBarsGame
         public List<Beat> Beats { get { return beats; } }
         List<Rectangle> Lanes;
 
-        List<IObserver<Beat>> _observers;
-
         Vector2 progressionDirection;
+
+        List<Vector2> LaneSpawnPoints;
+        BarManager bM;
 
         float speed;
 
@@ -50,11 +51,47 @@ namespace BeatBarsGame
             
         }
 
+        public BeatManager(Game game, BarManager barManager, Rectangle region, int laneCount, RowCompassLocation compassLocation) : base(game)
+        {
+            bM = barManager;
+            beats = new List<Beat>();
+            Lanes = new List<Rectangle>();
+            LaneSpawnPoints = new List<Vector2>();
+            Vector2 SpawnPointOffSet = new Vector2(0,0);
+            switch (compassLocation)
+            {
+                case RowCompassLocation.North:
+                    speed = 30f;
+                    SpawnPointOffSet = new Vector2(0, -region.Height);
+                    break;
+                case RowCompassLocation.South:
+                    speed = 30f;
+                    SpawnPointOffSet = new Vector2(0, region.Height);
+                    break;
+                case RowCompassLocation.East:
+                    speed = 50f;
+                    SpawnPointOffSet = new Vector2(region.Width, 0);
+                    break;
+                case RowCompassLocation.West:
+                    speed = 50f;
+                    SpawnPointOffSet = new Vector2(-region.Width, 0);
+                    break;
+            }
+            progressionDirection = -SpawnPointOffSet;
+            progressionDirection.Normalize();
+            for (int i = 0; i < laneCount; i++)
+            {
+                Vector2 point = barManager.getBarMidPointByIndex(i) + SpawnPointOffSet;
+                LaneSpawnPoints.Add(point);
+                //Lanes.Add(new Rectangle(region.Left + i * region.Width / laneCount, region.Top, region.Width / laneCount, region.Height));
+            }
+        }
+
         public override void Initialize()
         {
-            for(int i = 0; i < Lanes.Count; i++)
+            for(int i = 0; i < LaneSpawnPoints.Count; i++)
             {
-                Beat temp = new Beat(Game, Lanes[i].Center.ToVector2());
+                Beat temp = new Beat(Game, LaneSpawnPoints[i]);
                 beats.Add(temp);
                 temp.Initialize();
             }
@@ -63,12 +100,11 @@ namespace BeatBarsGame
 
         public override void Update(GameTime gameTime)
         {
-            foreach(var b in beats)
-            {
-                b.Location += progressionDirection * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
-                b.Update(gameTime);
-
-            }
+                foreach (var b in beats)
+                {
+                    b.Location += progressionDirection * speed * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
+                    b.Update(gameTime);
+                }
             base.Update(gameTime);
         }
 

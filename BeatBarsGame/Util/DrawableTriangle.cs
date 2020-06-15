@@ -21,7 +21,7 @@ namespace BeatBarsGame
         double changeElapsedTime;
 
         Triangle triangle;
-        VertexPositionColor[] _pcVerticies;
+        protected VertexPositionColor[] _pcVerticies;
         BasicEffect basicEffect;
         Matrix world;
         Matrix view;
@@ -127,7 +127,7 @@ namespace BeatBarsGame
             _pcVerticies[0].Color = newColor;
         }
 
-        public void SetVertexZeroToPosition(Vector3 newPosition)
+        public virtual void SetVertexZeroToPosition(Vector3 newPosition)
         {
             Vector3 dist = newPosition - _pcVerticies[0].Position;
 
