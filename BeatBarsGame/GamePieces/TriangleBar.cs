@@ -52,8 +52,6 @@ namespace BeatBarsGame
 
         public override void Initialize()
         {
-           
-            //this.Location = new Vector2(100, 100);
             if (this.BarState == BarSideState.Green) this.DrawColor = Color.Green;
             base.Initialize();
         }

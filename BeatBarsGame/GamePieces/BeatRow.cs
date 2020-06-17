@@ -96,9 +96,8 @@ namespace BeatBarsGame
                     break;
 
             }
-            basis = basisVectors;
 
-            barM = new BarManager(Game, basis, laneCount);
+            barM = new BarManager(Game, basisVectors, laneCount);
             barM.Initialize();
 
             beatM = new BeatManager(Game, barM, rowRectangle, laneCount, compassLocation);
@@ -116,18 +115,14 @@ namespace BeatBarsGame
             }
             beatM.Update(gameTime);
             barM.Update(gameTime);
-            foreach(var b in beatM.Beats)
-            {
-                if (barM.CheckCollision(b)) beatsToRemove.Add(b);
-            }
-            beatM.RemoveBeats(beatsToRemove.ToArray());
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
-            beatM.Draw(gameTime);
+            
             barM.Draw(gameTime);
+            beatM.Draw(gameTime);
             base.Draw(gameTime);
         }
 

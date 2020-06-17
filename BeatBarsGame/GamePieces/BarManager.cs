@@ -99,16 +99,15 @@ namespace BeatBarsGame
             }
         }
 
-        public bool CheckCollision(Beat beat)
+        public BarCollisionResult CheckCollision(Beat beat, int barID)
         {
-            foreach(var bar in bars)
-            {
-                if (bar.Intersects(beat.LocationRect))
+            TriangleBar barToCheck = bars[barID];
+            if (barToCheck.Intersects(beat.LocationRect))
                 {
-                    if (beat.State == bar.BarState) return true;
-                }
-            }
-            return false;
+                    if (beat.State == barToCheck.BarState) return BarCollisionResult.RightSide;
+                return BarCollisionResult.WrongSide;
+                }            
+            return BarCollisionResult.NoCollision;
         }
 
         public Vector2 getBarMidPointByIndex(int index)

@@ -13,6 +13,8 @@ namespace BeatBarsGame
         public enum BarSideState { Green, Red};
         public const int BarSideCount = 2;
 
+        public enum BarCollisionResult { NoCollision, RightSide, WrongSide};
+
         public static BarSideState GetNextBarState(BarSideState curstate)
         {
             switch (curstate)
