@@ -13,24 +13,36 @@ namespace BeatBarsGame
         SpriteBatch spriteBatch;
 
         InputHandler input;
+        TwitchInputHandler twitch;
+
         GameConsole console;
 
         RowManager rm;
 
-        
+        ScoreManager sm;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            //Window.IsBorderless = true;
             Content.RootDirectory = "Content";
 
+            twitch = new TwitchInputHandler(this);
             input = new InputHandler(this);
             console = new GameConsole(this);
+            this.Components.Add(twitch);
             this.Components.Add(input);
             this.Components.Add(console);
 
             rm = new RowManager(this);
             this.Components.Add(rm);
+
+            sm = new ScoreManager(this);
+            this.Components.Add(sm);
+
+            //TwitchInputHandler twitch = new TwitchInputHandler(this);
         }
 
         /// <summary>

@@ -13,8 +13,13 @@ namespace BeatBarsGame
         internal BBPlayerController controller { get; set; }
         Dictionary<RowCompassLocation, BeatRow> Rows = new Dictionary<RowCompassLocation, BeatRow>();
 
+        double timeSinceLastSpawn;
+        double spawnRate;
+
         public RowManager(Game game) : base(game)
         {
+            timeSinceLastSpawn = 0;
+            spawnRate = 2;
             this.controller = new BBPlayerController(game);
             Rows = new Dictionary<RowCompassLocation, BeatRow> {
                 { RowCompassLocation.North, new BeatRow(this.Game, RowCompassLocation.North, 3)},
@@ -37,6 +42,12 @@ namespace BeatBarsGame
 
         public override void Update(GameTime gameTime)
         {
+            timeSinceLastSpawn += gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
+            if (timeSinceLastSpawn >= spawnRate)
+            {
+                ChooseRowToSpawn();
+                timeSinceLastSpawn = 0;
+            }
             this.controller.Update();
             if (controller.RowsNeedChanged)
             {
@@ -52,6 +63,12 @@ namespace BeatBarsGame
             }
 
             base.Update(gameTime);
+        }
+
+        void ChooseRowToSpawn()
+        {
+            int choice = RandomQueue.GetRandomInt(Rows.Count);
+            Rows.ElementAt(choice).Value.RequestSpawn();
         }
 
         Rectangle CalculateRowRectangle(BeatRow row)

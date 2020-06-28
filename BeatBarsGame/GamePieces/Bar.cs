@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
@@ -41,6 +42,19 @@ namespace BeatBarsGame
                     return BarSideState.Green;
             }
         }
+
+        public static Color GetColorFromState(BarSideState curState)
+        {
+            switch (curState)
+            {
+                case BarSideState.Green:
+                    return Color.Green;
+                case BarSideState.Red:
+                    return Color.Red;
+                default:
+                    return Color.Green;
+            }
+        }
     }
     class Bar
     {
@@ -53,8 +67,6 @@ namespace BeatBarsGame
             {
                 if (_state != value)
                 {
-                    this.Log(string.Format("{0} was: {1} now {2}", this.ToString(), _state, value));
-
                     _state = value;
                 }
             }

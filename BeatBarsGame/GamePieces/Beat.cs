@@ -7,11 +7,20 @@ namespace BeatBarsGame
     class Beat : Sprite
     {
 
-        BarSideState state;
-        public BarSideState State { get { return state; } }
+        BarSideState _state;
+        public BarSideState State { get { return _state; }
+            set
+            {
+                if (_state != value)
+                {
+                    _state = value;
+                    this.DrawColor = GetColorFromState(value);
+                }
+            }
+        }
         public Beat(Game game, Vector2 position): base(game)
         {
-            state = BarSideState.Green;
+            _state = BarSideState.Green;
             this.Location = position;
         }
 
@@ -27,9 +36,8 @@ namespace BeatBarsGame
             base.LoadContent();
             this.spriteTexture = this.Game.Content.Load<Texture2D>("square");
             this.Origin = new Vector2(this.spriteTexture.Width / 2, this.spriteTexture.Height / 2);
-            this.DrawColor = Color.Green;
+            this.DrawColor = GetColorFromState(_state);
             this.scale = .01f;
-            //this.Location = new Vector2(100, 100);
         }
 
         public override void Draw(SpriteBatch sb)

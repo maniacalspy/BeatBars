@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static BeatBarsGame.BarGlobals;
@@ -14,7 +15,6 @@ namespace BeatBarsGame
         List<Beat> wrongbeats;
         Dictionary<Beat, int> beatsRowID;
         public List<Beat> Beats { get { return beatsRowID.Keys.ToList<Beat>(); } }
-        List<Rectangle> Lanes;
 
         Vector2 progressionDirection;
 
@@ -23,16 +23,12 @@ namespace BeatBarsGame
 
         float speed;
 
-        //TESTING VARIABLE
-        GameConsole console;
-
         public BeatManager(Game game, BarManager barManager, Rectangle region, int laneCount, RowCompassLocation compassLocation) : base(game)
         {
-            console = (GameConsole)game.Services.GetService<IGameConsole>();
             bM = barManager;
             beatsToRemove = new List<Beat>();
+            wrongbeats = new List<Beat>();
             beatsRowID = new Dictionary<Beat, int>();
-            Lanes = new List<Rectangle>();
             LaneSpawnPoints = new List<Vector2>();
             Vector2 SpawnPointOffSet = new Vector2(0,0);
             switch (compassLocation)
@@ -65,12 +61,6 @@ namespace BeatBarsGame
 
         public override void Initialize()
         {
-            for(int i = 0; i < LaneSpawnPoints.Count; i++)
-            {
-                Beat temp = new Beat(Game, LaneSpawnPoints[i]);
-                beatsRowID.Add(temp, i);
-                temp.Initialize();
-            }
             base.Initialize();
         }
 
@@ -84,7 +74,11 @@ namespace BeatBarsGame
                 b.Key.Update(gameTime);
             }
 
-            if (beatsToRemove.Count > 0) RemoveBeats(beatsToRemove);
+            if (beatsToRemove.Count > 0)
+            {
+                RemoveBeats();
+                beatsToRemove.Clear();
+            }
 
             base.Update(gameTime);
         }
@@ -97,7 +91,8 @@ namespace BeatBarsGame
                     beatsToRemove.Add(b);
                     break;
                 case BarCollisionResult.WrongSide:
-                    console.GameConsoleWrite("Wrong Side!");
+                    beatsToRemove.Add(b);
+                    wrongbeats.Add(b);
                     break;
             }
         }
@@ -114,17 +109,52 @@ namespace BeatBarsGame
             base.Draw(gameTime);
         }
 
-        void RemoveBeats(List<Beat> beats)
+        public void SpawnBeat()
         {
-            foreach (var b in beats)
+            int beatCount = RandomQueue.GetRandomInt(LaneSpawnPoints.Count+1);
+            int firstBarState = RandomQueue.GetRandomInt(BarSideCount);
+            List<int> AvailableLanes = new List<int>(LaneSpawnPoints.Count);
+            List<int> ChosenLanes = new List<int>();
+            for (int i = 0; i < LaneSpawnPoints.Count; i++)
+            {
+                AvailableLanes.Add(i);
+            }
+
+            for (int a = beatCount; a > 0; a--)
+            {
+                int index = RandomQueue.GetRandomInt(AvailableLanes.Count);
+                int laneChoice = AvailableLanes[index];
+                ChosenLanes.Add(laneChoice);
+                AvailableLanes.RemoveAt(index);
+            }
+            ChosenLanes.Sort();
+            for (int x = 0; x < beatCount; x++)
+            {
+                Beat b = new Beat(Game, LaneSpawnPoints[ChosenLanes[x]]);
+                b.Initialize();
+                b.State = GetStateFromInt((firstBarState + (ChosenLanes[x] - ChosenLanes[0])) % BarSideCount);
+                beatsRowID.Add(b, ChosenLanes[x]);
+            }
+            
+        }
+
+        void RemoveBeats()
+        {
+            foreach (var b in beatsToRemove)
             {
                 if (beatsRowID.ContainsKey(b))
                 {
+                    if (!wrongbeats.Contains(b))
+                    {
+                        Game.Services.GetService<IScoreService>().AddScore(1);
+                    }
+                    else Game.Services.GetService<IScoreService>().CurrentScore = 0;
                     b.Dispose();
                     beatsRowID.Remove(b);
                 }
             }
             beatsToRemove.Clear();
+            wrongbeats.Clear();
         }
 
     }

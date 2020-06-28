@@ -11,13 +11,13 @@ namespace BeatBarsGame
 {
     class TriangleBar : DrawableTriangle
     {
-        internal GameConsoleBar bar;
+        internal Bar bar;
 
         Vector2 barMidPoint;
         public Vector2 BarMidPoint { get { return barMidPoint; } }
         public TriangleBar(Game game, Vector2[] vertexPositionVectors) : base(game, vertexPositionVectors)
         {
-            this.bar = new GameConsoleBar((GameConsole)game.Services.GetService<IGameConsole>());
+            this.bar = new Bar();
             this.BarState = BarSideState.Green;
         }
 
@@ -28,17 +28,18 @@ namespace BeatBarsGame
             set
             {
                 if (this.barState != value)
+                {
+                    GradualColorChange(GetColorFromState(value));
                     switch (value)
                     {
                         case BarSideState.Green:
-                            GradualColorChange(Color.Green);
                             this.barState = this.bar.State = value;
                             break;
                         case BarSideState.Red:
-                            GradualColorChange(Color.Red);
                             this.barState = this.bar.State = value;
                             break;
                     }
+                }
             }
         }
 

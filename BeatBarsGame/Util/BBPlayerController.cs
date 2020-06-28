@@ -11,7 +11,34 @@ namespace BeatBarsGame
 
     sealed class BBPlayerController
     {
+        enum InputMode {Controller, Chat}
+
+        InputMode _mode;
+        InputMode Mode
+        {
+            get { return _mode; }
+
+            set {
+                if(_mode != value)
+                {
+                    if (value == InputMode.Chat)
+                    {
+                        twitchInput.BeginDataStream();
+                        _mode = value;
+
+                    }
+                    else
+                    {
+                        twitchInput.EndDataStream();
+                        _mode = value;
+                    }
+                }
+            }
+        }
+
+
         InputHandler input;
+        TwitchInputHandler twitchInput;
 
         public List<RowCompassLocation> ChangingRows { get; private set; }
 
@@ -21,6 +48,8 @@ namespace BeatBarsGame
 
         public BBPlayerController(Game game)
         {
+            _mode = InputMode.Controller;
+            twitchInput = (TwitchInputHandler)game.Services.GetService<IInputDataStream>();
             input = (InputHandler)game.Services.GetService<IInputHandler>();
 
             RowsNeedChanged = false;
@@ -42,19 +71,64 @@ namespace BeatBarsGame
 
         public void Update()
         {
+
+            CheckSwitchInputMode();
+
             List<RowCompassLocation> rowsPressed = new List<RowCompassLocation>();
-            List<RowCompassLocation> keyRowsPressed = HandleKeyboardRows();
 
-            foreach(var row in keyRowsPressed)
+            switch (_mode)
             {
-                if (!rowsPressed.Contains(row)) rowsPressed.Add(row);
+                case (InputMode.Controller):
+                    rowsPressed = KeyboardUpdate();
+                    break;
+
+                case (InputMode.Chat):
+                    rowsPressed = ChatUpdate();
+                    break;
             }
-
-
             ChangingRows = rowsPressed;
             if (ChangingRows.Count > 0) {
                 RowsNeedChanged = true;
             }
+        }
+
+        void CheckSwitchInputMode()
+        {
+            if (input.WasKeyPressed(Keys.OemTilde))
+            {
+                if (Mode == InputMode.Controller) Mode = InputMode.Chat;
+                else Mode = InputMode.Controller;
+            }
+        }
+
+        List<RowCompassLocation> KeyboardUpdate()
+        {
+            List<RowCompassLocation> output = new List<RowCompassLocation>();
+            List<RowCompassLocation> keyRowsPressed = HandleKeyboardRows();
+
+            foreach (var row in keyRowsPressed)
+            {
+                if (!output.Contains(row)) output.Add(row);
+            }
+
+            return output;
+        }
+
+        List<RowCompassLocation> ChatUpdate()
+        {
+            List<RowCompassLocation> output = new List<RowCompassLocation>();
+            //TODO: FINISH WRITING TWITCH INPUT HANDLER
+            List<Keys> ChatKeysRequested = twitchInput.StreamInputKeys;
+
+            foreach (var input in ChatKeysRequested)
+            {
+                if (keyRowBindings.ContainsKey(input))
+                {
+                    if (!output.Contains(keyRowBindings[input])) output.Add(keyRowBindings[input]);
+                }
+            }
+
+            return output;
         }
 
         public List<RowCompassLocation> HandleKeyboardRows()

@@ -71,7 +71,7 @@ namespace BeatBarsGame
         }
 
         public BeatRow(Game game, RowCompassLocation location, int numLanes) : base(game)
-        {
+        { 
             laneCount = numLanes;
             compassLocation = location;
             BarsNeedFlipped = false;
@@ -116,6 +116,11 @@ namespace BeatBarsGame
             beatM.Update(gameTime);
             barM.Update(gameTime);
             base.Update(gameTime);
+        }
+
+        public void RequestSpawn()
+        {
+            beatM.SpawnBeat();
         }
 
         public override void Draw(GameTime gameTime)
