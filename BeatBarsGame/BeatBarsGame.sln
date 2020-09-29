@@ -5,9 +5,7 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatBarsGame", "BeatBarsGame.csproj", "{C233CF74-7658-4BBF-81DB-16D8FC32CF2E}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ChatReader", "Util\ChatReader\ChatReader.pyproj", "{B082C7E7-2A5A-48B1-9E84-10B99BEB3C44}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PywinautoIntegration", "..\..\..\source\repos\PywinautoIntegration\PywinautoIntegration.pyproj", "{2F024525-6CC3-447B-A846-F4CA9DC80874}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ManiacalBot", "..\..\ManiacalBot\ManiacalBot\ManiacalBot.pyproj", "{D495D229-B516-48E1-8107-730C31668F08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,8 @@ Global
 		{C233CF74-7658-4BBF-81DB-16D8FC32CF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C233CF74-7658-4BBF-81DB-16D8FC32CF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C233CF74-7658-4BBF-81DB-16D8FC32CF2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B082C7E7-2A5A-48B1-9E84-10B99BEB3C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B082C7E7-2A5A-48B1-9E84-10B99BEB3C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F024525-6CC3-447B-A846-F4CA9DC80874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F024525-6CC3-447B-A846-F4CA9DC80874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D495D229-B516-48E1-8107-730C31668F08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D495D229-B516-48E1-8107-730C31668F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -51,7 +51,7 @@ namespace BeatBarsGame
             ChatRequestedKeys = new List<Keys>();
             start = new ProcessStartInfo();
             start.FileName = @"C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\python.exe";
-            start.Arguments = string.Format("{0} {1}", @"C:\Users\Nolan\Desktop\BeatBars\BeatBarsGame\Util\ChatReader\ChatBot.py", "BeatBars");
+            start.Arguments = string.Format("{0} {1}", @"C:\Users\Nolan\Desktop\ManiacalBot\ManiacalBot\ManiacalBot.py", "BeatBars");
             start.UseShellExecute = false;
             start.CreateNoWindow = true;
             start.RedirectStandardOutput = true;
@@ -64,6 +64,8 @@ namespace BeatBarsGame
             start.EnvironmentVariables["BOT_NICK"] = ChatBotData.BOT_NICK;
             start.EnvironmentVariables["BOT_PREFIX"] = ChatBotData.BOT_PREFIX;
             start.EnvironmentVariables["CHANNEL"] = ChatBotData.CHANNEL;
+            start.EnvironmentVariables["SECRET"] = ChatBotData.SECRET;
+
 
             process = new Process();
 
@@ -140,7 +142,8 @@ namespace BeatBarsGame
 
         void StopChatIntegration()
         {
-            process.Close();
+            process.Kill();
+            //process.Close();
         }
     }
 }

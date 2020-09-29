@@ -57,56 +57,73 @@ def ReleaseKey(hexKeyCode):
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
+class TestBot(commands.Bot):
+
+    bIntegrationMode = ctypes.c_bool(False)
+
+    class chat_data:
+        data = {}
 
 
+    def __init__(self):
+        super().__init__(irc_token=os.environ['TMI_TOKEN'], client_id=os.environ['CLIENT_ID'], nick=os.environ['BOT_NICK'],
+                         prefix=os.environ['BOT_PREFIX'], initial_channels=[os.environ['CHANNEL']])
+    
 
-bot = commands.Bot(
-    irc_token=os.environ['TMI_TOKEN'],
-    client_id=os.environ['CLIENT_ID'],
-    nick=os.environ['BOT_NICK'],
-    prefix=os.environ['BOT_PREFIX'],
-    initial_channels=[os.environ['CHANNEL']]
-    )
+    async def event_ready(self):
+        ws = self._ws
+        await ws.send_privmsg(os.environ['CHANNEL'], f"/me CHAT INTEGRATION HAS STARTED")
 
-class chat_data:
-   data = {}
+    async def ToggleIntegration(self):
+        self.bIntegrationMode = ctypes.c_bool(not bIntegrationMode)
 
-@bot.event
-async def event_ready():
-    ws = bot._ws
-    await ws.send_privmsg(os.environ['CHANNEL'], f"/me CHAT INTEGRATION HAS STARTED")
+    async def event_message(self, ctx):
+        if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
+            if ctx.content == "STOP":
+                bot._ws.teardown()
+                sys.exit()
+                return
+            
+            chatmessage = ctx.content.strip(' ').lower()
+            await self.handle_commands(ctx)
 
-@bot.event
-async def event_message(ctx):
-    if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
-        if ctx.content == "STOP":
-            bot._ws.teardown()
-            sys.exit()
+            if self.bIntegrationMode: HandleIntegration(self, chatmessagee)
+
+
+    async def HandleIntegration(self, message):
+        if(GameTitle == "BeatBars"):
+            if message == 'up' or message == 'north':
+                chat_data.data[ctx.author.name] = 'north'
+            elif message == 'down' or message == 'south':
+                chat_data.data[ctx.author.name] = 'south'
+            elif message == 'right' or message == 'east':
+                chat_data.data[ctx.author.name] = 'east'
+            elif message == 'left' or message == 'west':
+                chat_data.data[ctx.author.name] = 'west'
+
+        elif(GameTitle == "TTYD"):
+            if message in KeyWordBindData.keywords:
+                InputData = KeyWordBindData.keywords[message]
+                await SendKeyInputDuration(Key = InputData.button, duration = InputData.duration)
+
+        if len(chat_data.data) > 0:
+            await Print_Chat_Data()
             return
 
-    message = ctx.content.strip(' ').lower()
-    if(GameTitle == "BeatBars"):
-        if message == 'up' or message == 'north':
-            chat_data.data[ctx.author.name] = 'north'
-        elif message == 'down' or message == 'south':
-            chat_data.data[ctx.author.name] = 'south'
-        elif message == 'right' or message == 'east':
-            chat_data.data[ctx.author.name] = 'east'
-        elif message == 'left' or message == 'west':
-            chat_data.data[ctx.author.name] = 'west'
+    @commands.command(name='test')
+    async def TestCommand(self, ctx):
+        await ctx.send(f'Hello {ctx.author.name}')
+    
+    @commands.command(name='dontdothis')
+    async def TimeoutCommand(self, ctx):
+        await ctx.timeout(user = ctx.author, duration = 6000, reason = 'Did the bad command')
+        await ctx.send_me(f'{ctx.author.name} has tempted the fates, and now must learn their lesson')
 
-    elif(GameTitle == "TTYD"):
-        if message in KeyWordBindData.keywords:
-            InputData = KeyWordBindData.keywords[message]
-            await SendKeyInputDuration(Key = InputData.button, duration = InputData.duration)
 
-    if len(chat_data.data) > 0:
-       await Print_Chat_Data()
-       return
 
-async def Print_Chat_Data():
-    print(chat_data.data, flush=True)
-    chat_data.data.clear()
+    async def Print_Chat_Data():
+        print(chat_data.data, flush=True)
+        chat_data.data.clear()
 
 
 async def SendKeyInput(Key):
@@ -127,4 +144,5 @@ async def SendKeyInputDuration(Key, duration):
 
 
 if __name__ == "__main__":
+    bot = TestBot()
     bot.run()
